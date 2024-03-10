@@ -1,0 +1,84 @@
+body, button, p, h1, h2, h3, h4, h5, h6, span, footer{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+
+:root{
+    --main-bg-color: #fff;
+    --sec-bg-color: #05014a;
+    --active-font-color: rgb(217,171,128);
+    --main-font-color: white;
+    --light-grey: #f8f4f4;
+    --primary-font-style: 'Work Sans', sans-serif;
+}
+
+body{
+    font-family: var(--primary-font-style);
+}
+
+.mainTitle{
+    padding: 20px 0 30px;
+    text-align: center;
+    border-bottom: 3px solid black;
+
+}
+
+.output{
+    padding: 20px 20px 0 20px;
+}
+
+.output p{
+    font-family: var(--primary-font-style);
+    /* font-weight:500 */
+}
+
+.projectName{
+    margin-top: 20px
+}
+
+.main-btn{
+    /* width: 20px;
+    height: 10px; */
+    /* background-color: green; */
+    width:100px;
+    border-radius: 20px;
+    background-color: rgb(117, 164, 137);
+    color:#fff;
+    border-color: rgb(117, 164, 137);
+    padding: 10px 5px;
+}
+
+.time{
+    font-size: large;
+    color:black;
+}
+.projects{
+    display:flex;
+    justify-content: space-evenly;
+    align-items:center;
+    gap: 30px;
+    margin-bottom: 30px;
+}
+
+
+.stopWatch h1{
+    text-align: center;
+    padding-bottom: 20px;
+}
+/* .stopWatch{
+    padding: 20px;
+} */
+.stopWatch time{
+    font-size: 2em;
+}
+.bigTimer{
+    display:flex;
+    justify-content: space-around;
+    padding-bottom: 40px;
+}
+form{
+    padding: 0 20px;
+}
