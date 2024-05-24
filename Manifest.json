@@ -1,20 +1,23 @@
 {
-    "name": "Time Keeper",
-    "version": "1.0.0",
-    "description": "Time Keeper",
-    "manifest_version": 3,
-    "author": "Elyssa Hancock, Lindsay Garner, Anna Arutyunova",
-    "action":{
-        "default_popup": "index.html",
-        "default_title": "Time keeping"
-    },
-    "icons": {
-        "128": "images/stopwatch.png"
-    },
-    "background": {
-        "scripts": ["background.js"],
-        "persistent": false,
-        "type": "module"
-      }
-    
+  "name": "Time Keeper",
+  "version": "1.0.0",
+  "description": "Time Keeper",
+  "manifest_version": 3,
+  "author": "Elyssa Hancock, Lindsay Garner, Anna Arutyunova",
+  "action": {
+    "default_popup": "index.html",
+    "default_title": "Time keeping"
+  },
+  "icons": {
+    "128": "/images/stopwatch.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["script2.js"]
+    }
+  ]
 }
