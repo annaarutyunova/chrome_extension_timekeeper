@@ -25,14 +25,6 @@ function handleFormSubmit(event) {
         // Hide form
         form.style.display = 'none';
     }
-    // const projectName = document.getElementById('projectName');
-    // console.log({projectName})
-    // const projectNameHolder = document.createElement('p');
-    // projectNameHolder.innerText = projectName.value;
-    // const projectName = document.getElementById('projectName');
-    // console.log({projectName})
-    // const projectNameHolder = document.createElement('p');
-    // projectNameHolder.innerText = projectName.value;
 }
 
 // Add project to local storage.
@@ -48,9 +40,16 @@ function addProject(name) {
 
 // Create a new <li> for each project name and display
 function displayProject(name) {
+    const div = document.createElement('div');
+    div.classList.add('individualProject');
+    const img = document.createElement('img');
+    img.src = '/images/delete.png';
+    img.classList.add('deleteProjectIcon');
     const li = document.createElement('li');
     li.textContent = name;
-    projectList.appendChild(li);
+    div.appendChild(img);
+    div.appendChild(li);
+    projectList.appendChild(div);
 }
 
 // Retrieve projects from local storage
@@ -65,9 +64,18 @@ function loadProjects() {
 
 // When edit projects is clicked, remove icons are added next to each project name.
 document.getElementById("editProjects").addEventListener("click", () => {
-
+    // deleteIconds is aNodeList
+    const deleteIcons = document.querySelectorAll(".deleteProjectIcon");
+    // Iterate through each delete icon and toggle its display style
+    deleteIcons.forEach((icon) => {
+        if (icon.style.display === "block") {
+            icon.style.display = "none";
+        } else {
+            icon.style.display = "block";
+        }
+    });
 })
-
+    
 function allowProjectDelete() {
     const liElements = projectList.children;
     liElements.forEach((liElement) => {
