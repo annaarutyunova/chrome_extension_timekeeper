@@ -1,18 +1,4 @@
-// Display form when "+" button is clicked.
-function displayAddProjectForm () {
-     form = document.querySelector(".formContainer")
-     form.style.display = "block"
-}
-
-const formOpener = document.getElementById("formOpener")
-formOpener.addEventListener("click", displayAddProjectForm)
-
-// Add project to local storage when "Add Project" is clicked
-function addNewProjectToLocalStorage () {
-
-}
-
-
+// This code is for the background script
 document.addEventListener('DOMContentLoaded', function () {
     // DOMContentLoaded event fired, indicating that the DOM is fully loaded and ready
     console.log("DOM content loaded");
@@ -48,4 +34,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 });
+
+
+
 

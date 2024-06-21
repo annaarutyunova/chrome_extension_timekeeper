@@ -20,9 +20,8 @@ body{
 }
 
 .mainTitle{
-    padding: 20px 0 30px;
+    margin: 20px;
     text-align: center;
-    border-bottom: 3px solid black;
 
 }
 
@@ -81,4 +80,7 @@ body{
 }
 form{
     padding: 0 20px;
+}
+ul li {
+    list-style: none;
 }

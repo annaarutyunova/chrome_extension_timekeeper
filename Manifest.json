@@ -5,9 +5,10 @@
   "manifest_version": 3,
   "author": "Elyssa Hancock, Lindsay Garner, Anna Arutyunova",
   "action": {
-    "default_popup": "index.html",
+    "default_popup": "popup.html",
     "default_title": "Time keeping"
   },
+  "permissions": ["storage"],
   "icons": {
     "128": "/images/stopwatch.png"
   },

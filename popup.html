@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="/terse.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <script defer src="/script2.js"></script>
+    <script defer src="/popup.js"></script>
     <script defer src="/background.js"></script>
     <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
@@ -16,16 +17,19 @@
     </style>
 </head>
 <body style="width:300px; height:500px;">
-    <h1 class="mainTitle">Projects <button class="bct bn" id="formOpener"><span class="material-symbols-outlined">add</span>
-    </button></h1>
-    
+    <div class="df jcc aic" style="width:100%; border-bottom:2px solid #E5E5E5">
+        <img id="editProjects" src="/images/edit.png" style="width:25px; height:20x; object-fit:cover;">
+        <h1 class="mainTitle">Projects</h1>
+        <img id="formOpener" src="/images/add.png" style="width:25px; height:25px; object-fit:cover;">
+    </div>
+
     <div class="output"></div>
     <form class="formContainer" style="display:none;">
-        <label for="project_name">Project Name</label>
-        <input id="project_name" name="project_name">
+        <label for="projectName">Project Name</label>
+        <input id="projectName" name="project_name">
         <button id="addProject">Add Project</button>
     </form>
-
+    <ul id="projects" class="pl-m"></ul>
     <div class="wrapper">
         <p><span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span></p>
         <button id="button-start">Start</button>
