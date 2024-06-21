@@ -38,6 +38,14 @@ function addProject(name) {
     })
 }
 
+// Remove project from local storage
+function removeProjectFromLocalStorage(name) {
+    chrome.storage.local.get({ projects: [] }, function(result) {
+        let projects = result.projects.filter(project => project !== name);
+        chrome.storage.local.set({ projects: projects });
+    });
+}
+
 // Create a new <li> for each project name and display
 function displayProject(name) {
     const div = document.createElement('div');
@@ -50,6 +58,12 @@ function displayProject(name) {
     div.appendChild(img);
     div.appendChild(li);
     projectList.appendChild(div);
+
+    // Listen for a click event to delete if needed
+    img.addEventListener('click', function() {
+        div.remove();
+        removeProjectFromLocalStorage(name);
+    })
 }
 
 // Retrieve projects from local storage
