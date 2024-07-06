@@ -17,7 +17,6 @@ chrome.runtime.onMessage.addListener((message) => {
         intervalId = setInterval(updateTime, 1000);
     } else if (message.action === 'stop') {
         console.log("Stopping stopwatch");
-        updateTime();
         clearInterval(intervalId);
     } else if (message.action === 'reset') {
         console.log("Resetting stopwatch");

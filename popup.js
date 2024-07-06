@@ -31,7 +31,8 @@ function handleFormSubmit(event) {
 function addProject(name) {
     chrome.storage.local.get('projects', (result) => {
         const projects = result.projects || [];
-        projects.push(name);
+        // Add project to the beginning of the array
+        projects.unshift(name);
         chrome.storage.local.set({'projects': projects}, () => {
             displayProject(name);
         })
@@ -57,7 +58,7 @@ function displayProject(name) {
     li.textContent = name;
     div.appendChild(img);
     div.appendChild(li);
-    projectList.appendChild(div);
+    projectList.insertBefore(div, projectList.firstChild);
 
     // Listen for a click event to delete if needed
     img.addEventListener('click', function() {
@@ -70,6 +71,7 @@ function displayProject(name) {
 function loadProjects() {
     chrome.storage.local.get('projects', (result) => {
         const projects = result.projects || [];
+        projects.reverse();
         projects.forEach((project) => {
             displayProject(project);
         })
