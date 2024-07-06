@@ -91,10 +91,3 @@ document.getElementById("editProjects").addEventListener("click", () => {
         }
     });
 })
-    
-function allowProjectDelete() {
-    const liElements = projectList.children;
-    liElements.forEach((liElement) => {
-        
-    })
-}
