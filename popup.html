@@ -18,18 +18,16 @@
 </head>
 <body style="width:300px; height:500px;">
     <div class="df jcc aic" style="width:100%; border-bottom:2px solid #E5E5E5">
-        <img id="editProjects" src="/images/edit.png" alt='Edit Icon' style="width:25px; height:20x; object-fit:cover; cursor:pointer;">
+        <img id="editProjects" src="/images/edit.png" alt='Edit Icon' style="width:25px; height:20px; object-fit:cover; cursor:pointer;">
         <h1 class="mainTitle">Projects</h1>
         <img id="formOpener" src="/images/add.png" alt="Open Form Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
     </div>
-
-    <div class="output"></div>
-    <form class="formContainer" style="display:none;">
-        <label for="projectName">Project Name</label>
-        <input id="projectName" name="project_name">
-        <button id="addProject">Add Project</button>
+    <form class="formContainer pt-l fdc" style="display:none;">
+        <label for="projectName"></label>
+        <input id="projectName" name="project_name" class="p-xs" placeholder="Your Project">
+        <button id="addProject" class="mt-m pt-xs pb-xs pl-s pr-s" style="background-color:black; color:white; width:60px; align-self:flex-end;">Save</button>
     </form>
-    <ul id="projects" class="pl-m"></ul>
+    <ul id="projects" class="pl-m pt-l"></ul>
     <div class="wrapper tac mt-xl">
         <p><span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span></p>
         <img id="button-start" src="/images/play.png" alt="Start Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">

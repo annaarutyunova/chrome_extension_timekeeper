@@ -8,8 +8,16 @@ const projectList = document.getElementById('projects');
 // Display add project form when add button is clicked.
 document.getElementById('formOpener').addEventListener('click', () => 
     {
-        form.style.display = 'block';
-        form.addEventListener('submit', handleFormSubmit);
+        if (form.style.display === "none") {
+            form.style.display = 'flex';
+            form.addEventListener('submit', handleFormSubmit);
+        } else {
+            // removeEventListener can go after display is set to none
+            // because it is ok if "form" can't be found in this case
+            // it won't error out
+            form.style.display = 'none';
+            form.removeEventListener('submit', handleFormSubmit);
+        }
 }); 
 
 // Store an add project button in a variable.
