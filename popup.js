@@ -36,16 +36,22 @@ function handleFormSubmit(event) {
 }
 
 // Add project to local storage.
-function addProject(name) {
+function addProject(name, time = "00:00:00") {
     chrome.storage.local.get('projects', (result) => {
         const projects = result.projects || [];
-        // Add project to the beginning of the array
-        projects.unshift(name);
-        chrome.storage.local.set({'projects': projects}, () => {
-            displayProject(name);
-        })
-    })
+        
+        const newProject = {
+            name: name,
+            time: time
+        };
+
+        projects.unshift(newProject);
+        chrome.storage.local.set({ 'projects': projects }, () => {
+            displayProject(newProject);
+        });
+    });
 }
+
 
 // Remove project from local storage
 function removeProjectFromLocalStorage(name) {
@@ -55,24 +61,41 @@ function removeProjectFromLocalStorage(name) {
     });
 }
 
-// Create a new <li> for each project name and display
-function displayProject(name) {
+// Create a new <div> for each project and display
+function displayProject(project) {
     const div = document.createElement('div');
     div.classList.add('individualProject');
+
     const img = document.createElement('img');
     img.src = '/images/delete.png';
     img.classList.add('deleteProjectIcon');
+
     const li = document.createElement('li');
-    li.textContent = name;
+    li.textContent = project.name;
+
+    const timeContainer = document.createElement('div');
+    timeContainer.classList.add('wrapper');
+    timeContainer.classList.add('tac');
+    timeContainer.classList.add('timeDisplay');
+    timeContainer.innerHTML = `
+        <p><span id="hours-${project.name}">${project.time.split(':')[0]}</span>:
+        <span id="minutes-${project.name}">${project.time.split(':')[1]}</span>:
+        <span id="seconds-${project.name}">${project.time.split(':')[2]}</span></p>
+        <img id="button-start-${project.name}" class="button-start" src="/images/play.png" alt="Start Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
+        <img id="button-stop-${project.name}" class="button-stop" src="/images/stop.png" alt="Stop Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
+        <img id="button-reset-${project.name}" class="button-reset" src="/images/reset.png" alt="Reset Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
+    `;
+
     div.appendChild(img);
     div.appendChild(li);
+    div.appendChild(timeContainer);
     projectList.insertBefore(div, projectList.firstChild);
 
     // Listen for a click event to delete if needed
     img.addEventListener('click', function() {
         div.remove();
-        removeProjectFromLocalStorage(name);
-    })
+        removeProjectFromLocalStorage(project);
+    });
 }
 
 // Retrieve projects from local storage
