@@ -3,6 +3,15 @@ document.addEventListener('DOMContentLoaded', function () {
     // DOMContentLoaded event fired, indicating that the DOM is fully loaded and ready
     console.log("DOM content loaded");
 
+    // When the page is loaded, fetch all of the existing projects.
+   // Retrieve projects from local storage
+
+    chrome.storage.local.get('projects', (result) => {
+        const projects = result.projects || [];
+        projects.reverse();
+        console.log(projects, "Projects")
+    })
+
     // Send a message to the service worker to start the stopwatch when the extension button is clicked
     document.getElementById('button-start').addEventListener('click', () => {
         console.log("Sending start message to service worker");

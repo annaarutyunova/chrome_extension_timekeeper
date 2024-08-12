@@ -39,8 +39,10 @@ function handleFormSubmit(event) {
 function addProject(name, time = "00:00:00") {
     chrome.storage.local.get('projects', (result) => {
         const projects = result.projects || [];
+        const lastId = projects.length > 0 ? Math.max(projects.map(project => project.id)) : 0;
         
         const newProject = {
+            id: lastId + 1,
             name: name,
             time: time
         };
@@ -56,7 +58,7 @@ function addProject(name, time = "00:00:00") {
 // Remove project from local storage
 function removeProjectFromLocalStorage(name) {
     chrome.storage.local.get({ projects: [] }, function(result) {
-        let projects = result.projects.filter(project => project !== name);
+        let projects = result.projects.filter(project => project.name !== name);
         chrome.storage.local.set({ projects: projects });
     });
 }
@@ -78,12 +80,12 @@ function displayProject(project) {
     timeContainer.classList.add('tac');
     timeContainer.classList.add('timeDisplay');
     timeContainer.innerHTML = `
-        <p><span id="hours-${project.name}">${project.time.split(':')[0]}</span>:
-        <span id="minutes-${project.name}">${project.time.split(':')[1]}</span>:
-        <span id="seconds-${project.name}">${project.time.split(':')[2]}</span></p>
-        <img id="button-start-${project.name}" class="button-start" src="/images/play.png" alt="Start Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
-        <img id="button-stop-${project.name}" class="button-stop" src="/images/stop.png" alt="Stop Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
-        <img id="button-reset-${project.name}" class="button-reset" src="/images/reset.png" alt="Reset Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
+        <p><span id="hours-${project.name + project.time}">${project.time.split(':')[0]}</span>:
+        <span id="minutes-${project.name + project.time}">${project.time.split(':')[1]}</span>:
+        <span id="seconds-${project.name + project.time}">${project.time.split(':')[2]}</span></p>
+        <img id="button-start-${project.name + project.time}" class="button-start" src="/images/play.png" alt="Start Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
+        <img id="button-stop-${project.name + project.time}" class="button-stop" src="/images/stop.png" alt="Stop Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
+        <img id="button-reset-${project.name + project.time}" class="button-reset" src="/images/reset.png" alt="Reset Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
     `;
 
     div.appendChild(img);
@@ -94,7 +96,8 @@ function displayProject(project) {
     // Listen for a click event to delete if needed
     img.addEventListener('click', function() {
         div.remove();
-        removeProjectFromLocalStorage(project);
+        console.log(project.name)
+        removeProjectFromLocalStorage(project.name);
     });
 }
 
