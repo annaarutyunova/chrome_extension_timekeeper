@@ -1,6 +1,8 @@
 
 // Load projects initially
-document.addEventListener('DOMContentLoaded', () => loadProjects());
+document.addEventListener('DOMContentLoaded', () => {
+    loadProjects()
+});
 // Used in 2+ functions, so make it a variable?
 const form = document.querySelector('.formContainer');
 const projectList = document.getElementById('projects');
@@ -20,51 +22,72 @@ document.getElementById('formOpener').addEventListener('click', () =>
         }
 }); 
 
-// Store an add project button in a variable.
+// Handle form submission and add project to local storage
 function handleFormSubmit(event) {
     // Prevent the default form submission behavior
-    console.log("Triggered")
     event.preventDefault();
+
+    // Get the project name from the input field
     const projectName = document.getElementById('projectName').value.trim();
-    if(projectName) {
-        addProject(projectName);
-        // Clear Form
-        form.reset();
-        // Hide form
-        form.style.display = 'none';
+
+    // Only proceed if the project name is not empty
+    if (projectName) {
+        // Fetch existing projects from local storage
+        chrome.storage.local.get('projects', (result) => {
+            const projects = result.projects || [];
+
+            // Calculate the last ID based on the existing projects
+            const lastId = projects.length > 0 ? Math.max(...projects.map(project => project.id)) : 0;
+
+            // Create the new project object
+            const newProject = {
+                id: lastId + 1,
+                name: projectName,
+                seconds: '00',
+                minutes: '00',
+                hours: '00',
+            };
+
+            // Add the new project to the projects array
+            projects.unshift(newProject);
+
+            // Save the updated project list back to local storage
+            chrome.storage.local.set({ 'projects': projects }, () => {
+                // Update the UI to display the new project
+                displayProject(newProject);
+            });
+
+            // Clear the form
+            form.reset();
+            // Hide the form
+            form.style.display = 'none';
+        });
     }
 }
 
-// Add project to local storage.
-function addProject(name, time = "00:00:00") {
-    chrome.storage.local.get('projects', (result) => {
-        const projects = result.projects || [];
-        const lastId = projects.length > 0 ? Math.max(projects.map(project => project.id)) : 0;
-        
-        const newProject = {
-            id: lastId + 1,
-            name: name,
-            time: time
-        };
-
-        projects.unshift(newProject);
-        chrome.storage.local.set({ 'projects': projects }, () => {
-            displayProject(newProject);
-        });
-    });
-}
-
-
-// Remove project from local storage
-function removeProjectFromLocalStorage(name) {
+// Remove project from local storage and clear associated timers
+function removeProjectFromLocalStorage(projectToRemove) {
     chrome.storage.local.get({ projects: [] }, function(result) {
-        let projects = result.projects.filter(project => project.name !== name);
-        chrome.storage.local.set({ projects: projects });
+
+        // Filter out the project to remove it completely
+        let projects = result.projects.filter(project => project.id !== projectToRemove.id);
+        
+        // Save the updated projects array back to local storage
+        chrome.storage.local.set({ projects: projects }, () => {
+            console.log(`Project ${projectToRemove.name} was deleted.`);
+        });
+        chrome.runtime.sendMessage({ action: 'delete', projectId: projectToRemove.id });
+
+        // Clear any associated timer data
+        clearInterval(intervalIds[projectToRemove.id]);
+        delete intervalIds[projectToRemove.id];
+        delete projectTimers[projectToRemove.id];
     });
 }
 
 // Create a new <div> for each project and display
 function displayProject(project) {
+    console.log("Display Project: ", project.name + " " + project.id) // This works
     const div = document.createElement('div');
     div.classList.add('individualProject');
 
@@ -80,12 +103,12 @@ function displayProject(project) {
     timeContainer.classList.add('tac');
     timeContainer.classList.add('timeDisplay');
     timeContainer.innerHTML = `
-        <p><span id="hours-${project.name + project.time}">${project.time.split(':')[0]}</span>:
-        <span id="minutes-${project.name + project.time}">${project.time.split(':')[1]}</span>:
-        <span id="seconds-${project.name + project.time}">${project.time.split(':')[2]}</span></p>
-        <img id="button-start-${project.name + project.time}" class="button-start" src="/images/play.png" alt="Start Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
-        <img id="button-stop-${project.name + project.time}" class="button-stop" src="/images/stop.png" alt="Stop Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
-        <img id="button-reset-${project.name + project.time}" class="button-reset" src="/images/reset.png" alt="Reset Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
+        <p><span id="hours-${project.id}">${project.hours}</span>:
+        <span id="minutes-${project.id}">${project.minutes}</span>:
+        <span id="seconds-${project.id}">${project.seconds}</span></p>
+        <img id="button-start-${project.id}" src="/images/play.png" alt="Start Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
+        <img id="button-stop-${project.id}" src="/images/stop.png" alt="Stop Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
+        <img id="button-reset-${project.id}" src="/images/reset.png" alt="Reset Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
     `;
 
     div.appendChild(img);
@@ -97,7 +120,38 @@ function displayProject(project) {
     img.addEventListener('click', function() {
         div.remove();
         console.log(project.name)
-        removeProjectFromLocalStorage(project.name);
+        removeProjectFromLocalStorage(project);
+    });
+    // Attach event listeners for start, stop, and reset buttons
+    document.getElementById(`button-start-${project.id}`).addEventListener('click', () => {
+        console.log("Start button clicked");
+        let message = { action: 'start', projectId: project.id }
+        chrome.runtime.sendMessage(message);
+    });
+
+    document.getElementById(`button-stop-${project.id}`).addEventListener('click', () => {
+        console.log("Stop button clicked");
+        chrome.runtime.sendMessage({ action: 'stop', projectId: project.id });
+    });
+
+    document.getElementById(`button-reset-${project.id}`).addEventListener('click', () => {
+        console.log("Reset button clicked");
+        chrome.runtime.sendMessage({ action: 'reset', projectId: project.id });
+    });
+    // Listen for messages from the service worker to update the timer display
+    chrome.runtime.onMessage.addListener((message) => {
+        console.log("Received message from service worker:", message);
+        console.log("message.projectId", message.projectId)
+        if (message.action === 'updateTime') {
+            const projectId = message.projectId;
+            if(projectId){
+                document.getElementById(`seconds-${projectId}`).innerText = message.seconds;
+                document.getElementById(`minutes-${projectId}`).innerText = message.minutes;
+                document.getElementById(`hours-${projectId}`).innerText = message.hours;
+            } else {
+                console.error("Project ID is missing in the updateTime message.")
+            }
+        }
     });
 }
 

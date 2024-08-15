@@ -1,53 +1,79 @@
-console.log("Service worker loaded");
+// Store timers for each project
+const projectTimers = {};
+let intervalIds = {}; // Object to hold interval IDs for each project
 
-let seconds = 0;
-let minutes = 0;
-let hours = 0;
-let intervalId;
-
-chrome.runtime.onInstalled.addListener(() => {
-    console.log('Service worker installed');
-});
+// chrome.runtime.onInstalled.addListener(() => {
+//     console.log('Service worker installed');
+// });
 
 chrome.runtime.onMessage.addListener((message) => {
     console.log("Received message from content script:", message);
+
+    const projectId = message.projectId; // Get the project ID from the message
+
     if (message.action === 'start') {
-        console.log("Starting stopwatch");
-        clearInterval(intervalId);
-        intervalId = setInterval(updateTime, 1000);
+        console.log("Starting stopwatch for project:", projectId);
+        
+        // Clear any existing interval for this project
+        if (intervalIds[projectId]) {
+            clearInterval(intervalIds[projectId]);
+        }
+        
+        // Initialize timer if not already done
+        if (!projectTimers[projectId]) {
+            projectTimers[projectId] = { seconds: 0, minutes: 0, hours: 0 };
+        }
+
+        // Start the interval for this project
+        intervalIds[projectId] = setInterval(() => updateTime(projectId), 1000);
+        
     } else if (message.action === 'stop') {
-        console.log("Stopping stopwatch");
-        clearInterval(intervalId);
+        console.log("Stopping stopwatch for project:", projectId);
+        clearInterval(intervalIds[projectId]);
+        if (message.projectId !== 'deleted') {
+            sendTimeUpdate(projectId);
+        }
+        
     } else if (message.action === 'reset') {
-        console.log("Resetting stopwatch");
-        clearInterval(intervalId);
-        seconds = 0;
-        minutes = 0;
-        hours = 0;
-        sendTimeUpdate();
+        console.log("Resetting stopwatch for project:", projectId);
+        clearInterval(intervalIds[projectId]);
+        
+        // Reset timer for the project
+        projectTimers[projectId] = { seconds: 0, minutes: 0, hours: 0 };
+        sendTimeUpdate(projectId);
+    } else if (message.action === 'delete') {
+        console.log("Deleting stopwatch for project:", projectId);
+        clearInterval(intervalIds[projectId]);
     }
 });
 
-function updateTime() {
-    console.log("Updating time");
-    seconds++;
-    if (seconds >= 60) {
-        seconds = 0;
-        minutes++;
-        if (minutes >= 60) {
-            minutes = 0;
-            hours++;
+function updateTime(projectId) {
+    console.log("Updating time for project:", projectId);
+
+    let timer = projectTimers[projectId];
+    if (timer) {
+        timer.seconds++;
+        if (timer.seconds >= 60) {
+            timer.seconds = 0;
+            timer.minutes++;
+            if (timer.minutes >= 60) {
+                timer.minutes = 0;
+                timer.hours++;
+            }
         }
+        sendTimeUpdate(projectId);
     }
-    sendTimeUpdate();
 }
 
-function sendTimeUpdate() {
-    console.log("Sending time update");
-    chrome.runtime.sendMessage({
-        action: 'updateTime',
-        seconds: seconds.toString().padStart(2, '0'),
-        minutes: minutes.toString().padStart(2, '0'),
-        hours: hours.toString().padStart(2, '0')
-    });
+function sendTimeUpdate(projectId) {
+    console.log("Sending time update for project:", projectId);
+
+    const timer = projectTimers[projectId] || { seconds: '00', minutes: '00', hours: '00' };
+        chrome.runtime.sendMessage({
+            action: 'updateTime',
+            projectId: projectId,
+            seconds: timer.seconds.toString().padStart(2, '0'),
+            minutes: timer.minutes.toString().padStart(2, '0'),
+            hours: timer.hours.toString().padStart(2, '0')
+        });
 }
