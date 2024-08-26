@@ -90,20 +90,24 @@ function removeProjectFromLocalStorage(projectToRemove) {
 // Create a new <div> for each project and display
 function displayProject(project) {
     console.log("Name", project.name , "ID: " , project.id) // This works
-    const div = document.createElement('div');
-    div.classList.add('individualProject');
+    const li = document.createElement('li');
+    li.classList.add('individualProject');
+    li.classList.add('df')
+    li.classList.add('jcsb')
 
     const img = document.createElement('img');
     img.src = '/images/delete.png';
     img.classList.add('deleteProjectIcon');
 
-    const li = document.createElement('li');
-    li.textContent = project.name;
+    const projectName = document.createElement('p');
+    projectName.classList.add('nameOfProject')
+    projectName.textContent = project.name;
 
     const timeContainer = document.createElement('div');
     timeContainer.classList.add('wrapper');
     timeContainer.classList.add('tac');
     timeContainer.classList.add('timeDisplay');
+
     timeContainer.innerHTML = `
         <p><span id="hours-${project.id}">${project.hours}</span>:
         <span id="minutes-${project.id}">${project.minutes}</span>:
@@ -113,14 +117,14 @@ function displayProject(project) {
         <img id="button-reset-${project.id}" src="/images/reset.png" alt="Reset Icon" style="width:25px; height:25px; object-fit:cover; cursor:pointer;">
     `;
 
-    div.appendChild(img);
-    div.appendChild(li);
-    div.appendChild(timeContainer);
-    projectList.insertBefore(div, projectList.firstChild);
+    li.appendChild(img);
+    li.appendChild(projectName);
+    li.appendChild(timeContainer);
+    projectList.insertBefore(li, projectList.firstChild);
 
     // Listen for a click event to delete if needed
     img.addEventListener('click', function() {
-        div.remove();
+        li.remove();
         console.log(project.name)
         removeProjectFromLocalStorage(project);
     });

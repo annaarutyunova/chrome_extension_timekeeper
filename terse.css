@@ -108,6 +108,7 @@
 .fwlr{font-weight:lighter}
 .fwn{font-weight:normal}
 .fww{flex-wrap:wrap}
+.fwnw{flex-wrap:nowrap}
 .h100{height:100%}
 .ha{height:auto}
 .hit{height:inherit}
