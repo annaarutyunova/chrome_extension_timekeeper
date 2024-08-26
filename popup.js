@@ -13,6 +13,7 @@ document.getElementById('formOpener').addEventListener('click', () =>
         if (form.style.display === "none") {
             form.style.display = 'flex';
             form.addEventListener('submit', handleFormSubmit);
+            document.getElementById('projectName').focus();
         } else {
             // removeEventListener can go after display is set to none
             // because it is ok if "form" can't be found in this case
@@ -36,12 +37,13 @@ function handleFormSubmit(event) {
         chrome.storage.local.get('projects', (result) => {
             const projects = result.projects || [];
 
-            // Calculate the last ID based on the existing projects
-            const lastId = projects.length > 0 ? Math.max(...projects.map(project => project.id)) : 0;
+            // // Calculate the last ID based on the existing projects
+            // const lastId = projects.length > 0 ? Math.max(...projects.map(project => project.id)) : 0;
 
             // Create the new project object
             const newProject = {
-                id: lastId + 1,
+                // id: lastId + 1,
+                id: crypto.randomUUID(),
                 name: projectName,
                 seconds: '00',
                 minutes: '00',
@@ -87,7 +89,7 @@ function removeProjectFromLocalStorage(projectToRemove) {
 
 // Create a new <div> for each project and display
 function displayProject(project) {
-    console.log("Display Project: ", project.name + " " + project.id) // This works
+    console.log("Name", project.name , "ID: " , project.id) // This works
     const div = document.createElement('div');
     div.classList.add('individualProject');
 
