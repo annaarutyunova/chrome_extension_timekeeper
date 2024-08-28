@@ -2,10 +2,6 @@
 const projectTimers = {};
 let intervalIds = {}; // Object to hold interval IDs for each project
 
-// chrome.runtime.onInstalled.addListener(() => {
-//     console.log('Service worker installed');
-// });
-
 chrome.runtime.onMessage.addListener((message) => {
     console.log("Received message from content script:", message);
 
