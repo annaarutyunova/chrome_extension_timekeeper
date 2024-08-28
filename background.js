@@ -57,8 +57,29 @@ function updateTime(projectId) {
                 timer.hours++;
             }
         }
+        chrome.storage.local.get({ projects: [] }, function(result) {
+            let projects = result.projects;
+        
+            // Assuming `projectId` is the ID of the project you want to update
+            const projectIndex = projects.findIndex(project => project.id === projectId);
+        
+            if (projectIndex !== -1) {
+                // Update the properties
+                projects[projectIndex].seconds = timer.seconds.toString().padStart(2, '0');
+                projects[projectIndex].minutes = timer.minutes.toString().padStart(2, '0');
+                projects[projectIndex].hours = timer.hours.toString().padStart(2, '0');
+
+                // Save the updated projects array back to storage
+                chrome.storage.local.set({ projects }, () => {
+                    console.log("Time updated in local storage.");
+                });
+            } else {
+                console.error("Project not found.");
+            }
+        });
+        
         sendTimeUpdate(projectId);
-    }
+    }  
 }
 
 function sendTimeUpdate(projectId) {

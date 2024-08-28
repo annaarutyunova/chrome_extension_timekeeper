@@ -53,7 +53,7 @@ function handleFormSubmit(event) {
             projects.unshift(newProject);
 
             // Save the updated project list back to local storage
-            chrome.storage.local.set({ 'projects': projects }, () => {
+            chrome.storage.local.set({ projects: projects }, () => {
                 // Update the UI to display the new project
                 displayProject(newProject);
             });
@@ -89,6 +89,7 @@ function removeProjectFromLocalStorage(projectToRemove) {
 // Create a new <div> for each project and display
 function displayProject(project) {
     console.log("Name", project.name , "ID: " , project.id) // This works
+    console.log(project.seconds)
     const li = document.createElement('li');
     li.classList.add('individualProject');
     li.classList.add('df')
@@ -163,7 +164,9 @@ function displayProject(project) {
 // Retrieve projects from local storage
 function loadProjects() {
     chrome.storage.local.get('projects', (result) => {
-        const projects = result.projects || [];
+        console.log("result", result)
+        const projects = Array.isArray(result.projects) ? result.projects : [];
+        console.log("projects variable is: ", projects)
         projects.reverse();
         projects.forEach((project) => {
             displayProject(project);
