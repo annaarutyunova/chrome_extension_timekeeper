@@ -6,7 +6,6 @@ chrome.runtime.onMessage.addListener((message) => {
     console.log("Received message from content script:", message);
 
     const projectId = message.projectId; // Get the project ID from the message
-
     if (message.action === 'start') {
         console.log("Starting stopwatch for project:", projectId);
         
@@ -15,13 +14,29 @@ chrome.runtime.onMessage.addListener((message) => {
             clearInterval(intervalIds[projectId]);
         }
         
-        // Initialize timer if not already done
+        // Load timer from local storage if not already in memory
         if (!projectTimers[projectId]) {
-            projectTimers[projectId] = { seconds: 0, minutes: 0, hours: 0 };
+            chrome.storage.local.get({ projects: [] }, function(result) {
+                const projects = result.projects;
+                const project = projects.find(p => p.id === projectId);
+                if (project) {
+                    projectTimers[projectId] = {
+                        seconds: parseInt(project.seconds, 10),
+                        minutes: parseInt(project.minutes, 10),
+                        hours: parseInt(project.hours, 10)
+                    };
+                } else {
+                    // If the project doesn't exist, initialize to zero
+                    projectTimers[projectId] = { seconds: 0, minutes: 0, hours: 0 };
+                }
+                
+                // Start the interval after loading the correct time
+                intervalIds[projectId] = setInterval(() => updateTime(projectId), 1000);
+            });
+        } else {
+            // Start the interval if timer is already in memory
+            intervalIds[projectId] = setInterval(() => updateTime(projectId), 1000);
         }
-
-        // Start the interval for this project
-        intervalIds[projectId] = setInterval(() => updateTime(projectId), 1000);
         
     } else if (message.action === 'stop') {
         console.log("Stopping stopwatch for project:", projectId);
