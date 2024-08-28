@@ -1,6 +1,9 @@
 
 // Load projects initially
 document.addEventListener('DOMContentLoaded', () => {
+    // chrome.storage.local.clear(function(){
+    //     console.log("local storage.cleared")
+    // })
     loadProjects()
 });
 // Used in 2+ functions, so make it a variable?
@@ -37,12 +40,8 @@ function handleFormSubmit(event) {
         chrome.storage.local.get('projects', (result) => {
             const projects = result.projects || [];
 
-            // // Calculate the last ID based on the existing projects
-            // const lastId = projects.length > 0 ? Math.max(...projects.map(project => project.id)) : 0;
-
             // Create the new project object
             const newProject = {
-                // id: lastId + 1,
                 id: crypto.randomUUID(),
                 name: projectName,
                 seconds: '00',
