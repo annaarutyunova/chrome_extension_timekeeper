@@ -3,11 +3,11 @@ const projectTimers = {};
 let intervalIds = {}; // Object to hold interval IDs for each project
 
 chrome.runtime.onMessage.addListener((message) => {
-    console.log("Received message from content script:", message);
+    // console.log("Received message from content script:", message);
 
     const projectId = message.projectId; // Get the project ID from the message
     if (message.action === 'start') {
-        console.log("Starting stopwatch for project:", projectId);
+        // console.log("Starting stopwatch for project:", projectId);
         
         // Clear any existing interval for this project
         if (intervalIds[projectId]) {
@@ -39,27 +39,27 @@ chrome.runtime.onMessage.addListener((message) => {
         }
         
     } else if (message.action === 'stop') {
-        console.log("Stopping stopwatch for project:", projectId);
+        // console.log("Stopping stopwatch for project:", projectId);
         clearInterval(intervalIds[projectId]);
         if (message.projectId !== 'deleted') {
             sendTimeUpdate(projectId);
         }
         
     } else if (message.action === 'reset') {
-        console.log("Resetting stopwatch for project:", projectId);
+        // console.log("Resetting stopwatch for project:", projectId);
         clearInterval(intervalIds[projectId]);
         
         // Reset timer for the project
         projectTimers[projectId] = { seconds: 0, minutes: 0, hours: 0 };
         sendTimeUpdate(projectId);
     } else if (message.action === 'delete') {
-        console.log("Deleting stopwatch for project:", projectId);
+        // console.log("Deleting stopwatch for project:", projectId);
         clearInterval(intervalIds[projectId]);
     }
 });
 
 function updateTime(projectId) {
-    console.log("Updating time for project:", projectId);
+    // console.log("Updating time for project:", projectId);
 
     let timer = projectTimers[projectId];
     if (timer) {
@@ -86,7 +86,7 @@ function updateTime(projectId) {
 
                 // Save the updated projects array back to storage
                 chrome.storage.local.set({ projects }, () => {
-                    console.log("Time updated in local storage.");
+                    // console.log("Time updated in local storage.");
                 });
             } else {
                 console.error("Project not found.");
@@ -98,7 +98,7 @@ function updateTime(projectId) {
 }
 
 function sendTimeUpdate(projectId) {
-    console.log("Sending time update for project:", projectId);
+    // console.log("Sending time update for project:", projectId);
 
     const timer = projectTimers[projectId] || { seconds: '00', minutes: '00', hours: '00' };
         chrome.runtime.sendMessage({

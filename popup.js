@@ -75,7 +75,7 @@ function removeProjectFromLocalStorage(projectToRemove) {
         
         // Save the updated projects array back to local storage
         chrome.storage.local.set({ projects: projects }, () => {
-            console.log(`Project ${projectToRemove.name} was deleted.`);
+            // console.log(`Project ${projectToRemove.name} was deleted.`);
         });
         chrome.runtime.sendMessage({ action: 'delete', projectId: projectToRemove.id });
 
@@ -88,8 +88,8 @@ function removeProjectFromLocalStorage(projectToRemove) {
 
 // Create a new <div> for each project and display
 function displayProject(project) {
-    console.log("Name", project.name , "ID: " , project.id) // This works
-    console.log(project.seconds)
+    // console.log("Name", project.name , "ID: " , project.id) // This works
+    // console.log(project.seconds)
     const li = document.createElement('li');
     li.classList.add('individualProject');
     li.classList.add('df')
@@ -125,29 +125,29 @@ function displayProject(project) {
     // Listen for a click event to delete if needed
     img.addEventListener('click', function() {
         li.remove();
-        console.log(project.name)
+        // console.log(project.name)
         removeProjectFromLocalStorage(project);
     });
     // Attach event listeners for start, stop, and reset buttons
     document.getElementById(`button-start-${project.id}`).addEventListener('click', () => {
-        console.log("Start button clicked");
+        // console.log("Start button clicked");
         let message = { action: 'start', projectId: project.id }
         chrome.runtime.sendMessage(message);
     });
 
     document.getElementById(`button-stop-${project.id}`).addEventListener('click', () => {
-        console.log("Stop button clicked");
+        // console.log("Stop button clicked");
         chrome.runtime.sendMessage({ action: 'stop', projectId: project.id });
     });
 
     document.getElementById(`button-reset-${project.id}`).addEventListener('click', () => {
-        console.log("Reset button clicked");
+        // console.log("Reset button clicked");
         chrome.runtime.sendMessage({ action: 'reset', projectId: project.id });
     });
     // Listen for messages from the service worker to update the timer display
     chrome.runtime.onMessage.addListener((message) => {
-        console.log("Received message from service worker:", message);
-        console.log("message.projectId", message.projectId)
+        // console.log("Received message from service worker:", message);
+        // console.log("message.projectId", message.projectId)
         if (message.action === 'updateTime') {
             const projectId = message.projectId;
             if(projectId){
@@ -164,9 +164,9 @@ function displayProject(project) {
 // Retrieve projects from local storage
 function loadProjects() {
     chrome.storage.local.get('projects', (result) => {
-        console.log("result", result)
+        // console.log("result", result)
         const projects = Array.isArray(result.projects) ? result.projects : [];
-        console.log("projects variable is: ", projects)
+        // console.log("projects variable is: ", projects)
         projects.reverse();
         projects.forEach((project) => {
             displayProject(project);
